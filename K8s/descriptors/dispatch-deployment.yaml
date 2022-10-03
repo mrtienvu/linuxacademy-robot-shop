@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
@@ -9,8 +9,17 @@ metadata:
     io.kompose.service: dispatch
   name: dispatch
 spec:
+  progressDeadlineSeconds: 2147483647
   replicas: 1
-  strategy: {}
+  revisionHistoryLimit: 2147483647
+  selector:
+    matchLabels:
+      io.kompose.service: dispatch
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
   template:
     metadata:
       creationTimestamp: null
@@ -18,13 +27,15 @@ spec:
         io.kompose.service: dispatch
     spec:
       containers:
-      - image: linuxacademycontent/rs-dispatch:latest
+      - env:
+        - name: INSTANA_AGENT_HOST
+          valueFrom:
+            fieldRef:
+              apiVersion: v1
+              fieldPath: status.hostIP
+        image: linuxacademycontent/rs-dispatch:latest
+        imagePullPolicy: Always
         name: dispatch
-        env:
-          - name: INSTANA_AGENT_HOST
-            valueFrom:
-              fieldRef:
-                fieldPath: status.hostIP
         resources:
           limits:
             cpu: 200m
@@ -32,5 +43,11 @@ spec:
           requests:
             cpu: 100m
             memory: 50Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
       restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
 status: {}

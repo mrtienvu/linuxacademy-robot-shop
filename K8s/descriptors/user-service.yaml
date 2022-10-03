@@ -9,11 +9,15 @@ metadata:
     io.kompose.service: user
   name: user
 spec:
+  internalTrafficPolicy: Cluster
   ports:
   - name: "8080"
     port: 8080
+    protocol: TCP
     targetPort: 8080
   selector:
     io.kompose.service: user
+  sessionAffinity: None
+  type: ClusterIP
 status:
   loadBalancer: {}

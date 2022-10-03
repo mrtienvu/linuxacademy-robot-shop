@@ -9,13 +9,17 @@ metadata:
     io.kompose.service: web
   name: web
 spec:
-  type: NodePort
+  externalTrafficPolicy: Cluster
+  internalTrafficPolicy: Cluster
   ports:
   - name: "8080"
-    port: 8080
-    targetPort: 8080
     nodePort: 30080
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
   selector:
     io.kompose.service: web
+  sessionAffinity: None
+  type: NodePort
 status:
   loadBalancer: {}

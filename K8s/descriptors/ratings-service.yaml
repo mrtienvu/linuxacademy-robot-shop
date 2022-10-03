@@ -9,11 +9,15 @@ metadata:
     io.kompose.service: ratings
   name: ratings
 spec:
+  internalTrafficPolicy: Cluster
   ports:
   - name: "80"
     port: 80
+    protocol: TCP
     targetPort: 80
   selector:
     io.kompose.service: ratings
+  sessionAffinity: None
+  type: ClusterIP
 status:
   loadBalancer: {}

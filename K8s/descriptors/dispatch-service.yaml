@@ -10,11 +10,15 @@ metadata:
   name: dispatch
 spec:
   clusterIP: None
+  internalTrafficPolicy: Cluster
   ports:
   - name: headless
     port: 55555
-    targetPort: 0
+    protocol: TCP
+    targetPort: 55555
   selector:
     io.kompose.service: dispatch
+  sessionAffinity: None
+  type: ClusterIP
 status:
   loadBalancer: {}

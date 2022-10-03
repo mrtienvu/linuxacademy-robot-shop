@@ -9,11 +9,15 @@ metadata:
     io.kompose.service: catalogue
   name: catalogue
 spec:
+  internalTrafficPolicy: Cluster
   ports:
   - name: "8080"
     port: 8080
+    protocol: TCP
     targetPort: 8080
   selector:
     io.kompose.service: catalogue
+  sessionAffinity: None
+  type: ClusterIP
 status:
   loadBalancer: {}

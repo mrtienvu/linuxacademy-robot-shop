@@ -9,11 +9,15 @@ metadata:
     io.kompose.service: cart
   name: cart
 spec:
+  internalTrafficPolicy: Cluster
   ports:
   - name: "8080"
     port: 8080
+    protocol: TCP
     targetPort: 8080
   selector:
     io.kompose.service: cart
+  sessionAffinity: None
+  type: ClusterIP
 status:
   loadBalancer: {}

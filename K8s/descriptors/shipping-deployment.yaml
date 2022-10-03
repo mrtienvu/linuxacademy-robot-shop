@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   annotations:
@@ -9,8 +9,17 @@ metadata:
     io.kompose.service: shipping
   name: shipping
 spec:
+  progressDeadlineSeconds: 2147483647
   replicas: 1
-  strategy: {}
+  revisionHistoryLimit: 2147483647
+  selector:
+    matchLabels:
+      io.kompose.service: shipping
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
   template:
     metadata:
       creationTimestamp: null
@@ -19,9 +28,11 @@ spec:
     spec:
       containers:
       - image: linuxacademycontent/rs-shipping:latest
+        imagePullPolicy: Always
         name: shipping
         ports:
         - containerPort: 8080
+          protocol: TCP
         resources:
           limits:
             cpu: 200m
@@ -29,5 +40,11 @@ spec:
           requests:
             cpu: 100m
             memory: 50Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
       restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
 status: {}
